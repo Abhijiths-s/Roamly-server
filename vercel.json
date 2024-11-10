@@ -1,0 +1,18 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "server.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      { "src": "/api/auth/(.*)", "dest": "server.js" },
+      { "src": "/api/blog/(.*)", "dest": "server.js" },
+      { "src": "/api/user/(.*)", "dest": "server.js" }
+    ],
+    "env": {
+      "NODE_ENV": "production"
+    }
+  }
+  
