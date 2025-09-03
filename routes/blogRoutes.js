@@ -7,6 +7,9 @@ const {
   getUserBlogs, // New function for fetching blogs by the logged-in user
   updateBlog,
   deleteBlog,
+  toggleLike,
+  addComment,
+  getComments,
 } = require("../controllers/blogController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -40,5 +43,10 @@ router.put("/:id", authMiddleware, updateBlog);
 
 // Route for deleting a blog by ID (requires authentication)
 router.delete("/:id", authMiddleware, deleteBlog);
+
+router.post("/:id/like", authMiddleware, toggleLike);
+
+router.post("/:id/comment", authMiddleware, addComment);
+router.get("/:id/comments", getComments);
 
 module.exports = router;

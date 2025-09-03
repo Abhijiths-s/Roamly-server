@@ -112,3 +112,52 @@ exports.deleteBlog = async (req, res) => {
     res.status(500).json({ message: "Error deleting blog", error });
   }
 };
+
+exports.toggleLike = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+    const userId = req.user.id;
+    const liked = blog.likes.includes(userId);
+
+    if (liked) {
+      // If already liked, remove the like
+      blog.likes.pull(userId);
+    } else {
+      // If not liked, add the like
+      blog.likes.push(userId);
+    }
+
+    await blog.save();
+    res.status(200).json({ likes: blog.likes.length, liked: !liked });
+  } catch (error) {
+    res.status(500).json({ message: "Error toggling like", error });
+  }
+};
+
+exports.addComment = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+
+    const comment = {
+      user: req.user.id,
+      text: req.body.text,
+    };
+    blog.comments.push(comment);
+    await blog.save();
+    res.status(201).json(blog.comments);
+  } catch (error) {
+    res.status(500).json({ message: "Error adding comment", error });
+  }
+};
+
+exports.getComments = async (req, res) => { 
+  try {
+    const blog = await Blog.findById(req.params.id).populate("comments.user", "username");
+    if (!blog) return res.status(404).json({ message: "Blog not found" });  
+    res.status(200).json(blog.comments);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching comments", error });
+  } 
+};
